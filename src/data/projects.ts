@@ -51,4 +51,17 @@ export const projects: Project[] = [
     year: 2026,
     featured: true,
   },
+  {
+    id: "1998-recording-studio",
+    title: "19.98 Studio",
+    description: {
+      it: "Sito vetrina per studio di registrazione a Bari con servizi di produzione, registrazione, mix e mastering.",
+      en: "Showcase website for a recording studio in Bari offering production, recording, mixing and mastering services.",
+    },
+    tags: ["Next.js", "React", "Tailwind CSS", "Vercel"],
+    liveUrl: "https://1998recordingstudio-web.vercel.app/",
+    previewUrl: "https://1998recordingstudio-web.vercel.app/",
+    year: 2026,
+    featured: true,
+  },
 ];
