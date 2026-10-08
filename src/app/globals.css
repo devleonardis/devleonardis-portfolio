@@ -7,8 +7,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-plex);
+  --font-display: var(--font-martian);
+  --font-mono: var(--font-martian);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-limestone: var(--limestone);
+  --color-steel: var(--steel);
+  --color-phosphor: var(--phosphor);
+  --color-sodium: var(--sodium);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -43,39 +50,56 @@
   --radius-lg: var(--radius);
 }
 
+/*
+  Palette: notte sull'Adriatico + fosfori da terminale + lampioni al sodio del lungomare di Bari.
+  ink       #08121C  fondo
+  surface   #0E1D2B  superfici
+  limestone #ECE6D9  testo (pietra di Bari)
+  steel     #8796AA  testo secondario
+  phosphor  #5CF2B0  accento primario
+  sodium    #FFB547  accento di gioco (bug, punteggi)
+*/
 :root {
-  --radius: 0.7rem;
-  --background: oklch(0.14 0.01 260);
-  --foreground: oklch(0.98 0.005 240);
-  --card: oklch(0.18 0.01 260);
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.18 0.01 260);
-  --popover-foreground: oklch(0.98 0.005 240);
-  --primary: oklch(0.82 0.13 160);
-  --primary-foreground: oklch(0.15 0.01 240);
-  --secondary: oklch(0.23 0.01 260);
-  --secondary-foreground: oklch(0.95 0.01 240);
-  --muted: oklch(0.24 0.01 260);
-  --muted-foreground: oklch(0.78 0.02 250);
-  --accent: oklch(0.23 0.02 230);
-  --accent-foreground: oklch(0.96 0.01 240);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(0.33 0.02 255 / 40%);
-  --input: oklch(0.3 0.02 255 / 50%);
-  --ring: oklch(0.72 0.1 160);
-  --chart-1: oklch(0.65 0.17 230);
-  --chart-2: oklch(0.68 0.14 170);
-  --chart-3: oklch(0.75 0.08 80);
-  --chart-4: oklch(0.6 0.19 305);
-  --chart-5: oklch(0.72 0.15 20);
-  --sidebar: oklch(0.18 0.01 260);
-  --sidebar-foreground: oklch(0.98 0.005 240);
-  --sidebar-primary: oklch(0.65 0.17 230);
-  --sidebar-primary-foreground: oklch(0.98 0.005 240);
-  --sidebar-accent: oklch(0.24 0.01 260);
-  --sidebar-accent-foreground: oklch(0.98 0.005 240);
-  --sidebar-border: oklch(0.33 0.02 255 / 40%);
-  --sidebar-ring: oklch(0.72 0.1 160);
+  --radius: 0.6rem;
+  --ink: #08121c;
+  --surface: #0e1d2b;
+  --limestone: #ece6d9;
+  --steel: #8796aa;
+  --phosphor: #5cf2b0;
+  --sodium: #ffb547;
+  --line: rgb(236 230 217 / 0.1);
+
+  --background: var(--ink);
+  --foreground: var(--limestone);
+  --card: var(--surface);
+  --card-foreground: var(--limestone);
+  --popover: var(--surface);
+  --popover-foreground: var(--limestone);
+  --primary: var(--phosphor);
+  --primary-foreground: var(--ink);
+  --secondary: #13283a;
+  --secondary-foreground: var(--limestone);
+  --muted: #13283a;
+  --muted-foreground: var(--steel);
+  --accent: #13283a;
+  --accent-foreground: var(--limestone);
+  --destructive: #ff6b5b;
+  --border: var(--line);
+  --input: rgb(236 230 217 / 0.14);
+  --ring: var(--phosphor);
+  --chart-1: var(--phosphor);
+  --chart-2: var(--sodium);
+  --chart-3: var(--steel);
+  --chart-4: var(--limestone);
+  --chart-5: #ff6b5b;
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--limestone);
+  --sidebar-primary: var(--phosphor);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: #13283a;
+  --sidebar-accent-foreground: var(--limestone);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--phosphor);
 }
 
 @layer base {
@@ -83,12 +107,18 @@
     @apply border-border outline-ring/50;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
     @apply bg-background text-foreground;
+  }
+
+  ::selection {
+    background: var(--phosphor);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--phosphor);
+    outline-offset: 3px;
   }
 }
 
@@ -100,7 +130,7 @@
   textarea,
   [role="button"] {
     cursor:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='28' viewBox='0 0 46 28'%3E%3Crect x='1' y='1' width='44' height='26' rx='7' fill='%23060b10' stroke='%2334d399' stroke-opacity='0.9'/%3E%3Ctext x='10' y='19' font-size='13' font-family='monospace' fill='%2334d399'%3E%26lt;/%26gt;%3C/text%3E%3C/svg%3E")
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='28' viewBox='0 0 46 28'%3E%3Crect x='1' y='1' width='44' height='26' rx='7' fill='%2308121c' stroke='%235cf2b0' stroke-opacity='0.9'/%3E%3Ctext x='10' y='19' font-size='13' font-family='monospace' fill='%235cf2b0'%3E%26lt;/%26gt;%3C/text%3E%3C/svg%3E")
         10 10,
       auto;
   }
@@ -108,32 +138,42 @@
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-space-grotesk), sans-serif;
+    font-family: var(--font-martian), ui-monospace, monospace;
+  }
+
+  .wide {
+    font-stretch: 112.5%;
+    font-variation-settings: "wdth" 112.5;
+  }
+
+  .narrow {
+    font-stretch: 75%;
+    font-variation-settings: "wdth" 75;
+  }
+
+  .caret::after {
+    content: "";
+    display: inline-block;
+    width: 0.55em;
+    height: 1em;
+    margin-left: 0.15em;
+    vertical-align: -0.12em;
+    background: var(--phosphor);
+    animation: caret-blink 1.05s steps(1) infinite;
+  }
+
+  .grid-floor {
+    background-image:
+      linear-gradient(to right, rgb(92 242 176 / 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(92 242 176 / 0.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
   }
 
   .noise-layer {
     background-image: radial-gradient(rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px);
     background-size: 4px 4px;
     mix-blend-mode: soft-light;
-  }
-
-  .micro-glitch {
-    position: relative;
-    animation: micro-glitch 3.5s infinite steps(2, end);
-    will-change: transform;
-  }
-
-  .highlight-sweep {
-    background: linear-gradient(120deg, transparent 30%, rgba(16, 185, 129, 0.95), transparent 70%);
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: highlight-sweep 4s ease-in-out infinite;
-  }
-
-  .spotlight {
-    will-change: background;
   }
 
   .photo-glitch-layer {
@@ -158,23 +198,6 @@
     animation: photo-glitch-b 0.21s steps(2, end) infinite;
   }
 
-  .photo-glitch-noise {
-    position: absolute;
-    inset: 0;
-    opacity: 0.32;
-    background-image:
-      repeating-linear-gradient(
-        0deg,
-        rgba(52, 211, 153, 0.15) 0 1px,
-        transparent 1px 4px
-      ),
-      radial-gradient(rgba(255, 255, 255, 0.18) 0.5px, transparent 0.5px);
-    background-size:
-      100% 5px,
-      3px 3px;
-    animation: photo-glitch-flicker 0.26s steps(2, end) infinite;
-  }
-
   .photo-scanlines {
     position: absolute;
     inset: 0;
@@ -190,30 +213,19 @@
   }
 }
 
-@keyframes micro-glitch {
-  0%,
-  95%,
-  100% {
-    transform: translate(0);
-    text-shadow: 0 0 0 transparent;
-  }
-  96% {
-    transform: translate(0.3px, -0.2px);
-    text-shadow: 0.5px 0 0 rgba(52, 211, 153, 0.25), -0.5px 0 0 rgba(59, 130, 246, 0.2);
-  }
-  98% {
-    transform: translate(-0.2px, 0.2px);
-    text-shadow: -0.4px 0 0 rgba(52, 211, 153, 0.2), 0.4px 0 0 rgba(59, 130, 246, 0.25);
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
   }
 }
 
-@keyframes highlight-sweep {
+@keyframes bug-wiggle {
   0%,
   100% {
-    background-position: 140% 0;
+    transform: rotate(-8deg);
   }
   50% {
-    background-position: -40% 0;
+    transform: rotate(8deg);
   }
 }
 
@@ -272,22 +284,6 @@
   }
 }
 
-@keyframes photo-glitch-flicker {
-  0%,
-  100% {
-    opacity: 0.24;
-  }
-  40% {
-    opacity: 0.36;
-  }
-  55% {
-    opacity: 0.2;
-  }
-  80% {
-    opacity: 0.33;
-  }
-}
-
 @keyframes photo-scan {
   0% {
     transform: translateY(-8px);
@@ -298,11 +294,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .micro-glitch,
-  .highlight-sweep,
   .photo-glitch-layer,
-  .photo-glitch-noise,
-  .photo-scanlines {
+  .photo-scanlines,
+  .caret::after {
     animation: none;
   }
 }

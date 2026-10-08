@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "devleonardis-portfolio",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "devleonardis.com", "custom_domain": true },
+    { "pattern": "www.devleonardis.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./out",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // The Worker runs first so it can redirect www to the apex domain and handle /api/contact.
+    "run_worker_first": true
+  },
+  "vars": {
+    "SMTP_PORT": "587",
+    "CONTACT_FROM_EMAIL": "mailfrom@devleonardis.com",
+    "CONTACT_TO_EMAIL": "info@devleonardis.com"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

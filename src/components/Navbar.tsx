@@ -1,87 +1,105 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { MessageCircle } from "lucide-react";
+import { motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
+import { Command } from "lucide-react";
+import { useState } from "react";
 
+import { useBugHunt } from "@/components/BugHunt";
+import { PALETTE_EVENT } from "@/components/CommandPalette";
 import { useLanguage } from "@/components/LanguageProvider";
-import { Button } from "@/components/ui/button";
-import { whatsappLink } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const { locale, setLocale, t } = useLanguage();
+  const { found, total, notify } = useBugHunt();
+  const { scrollY, scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 260, damping: 40 });
+  const [hidden, setHidden] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    setHidden(latest > previous && latest > 240);
+  });
 
   const navLinks = [
     { label: t.nav.projects, href: "#projects" },
+    { label: t.nav.play, href: "#play" },
     { label: t.nav.about, href: "#about" },
-    { label: t.nav.services, href: "#services" },
     { label: t.nav.contact, href: "#contact" },
   ];
 
   return (
-    <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
-      className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-xl"
-    >
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-6 py-4 md:px-8">
-        <a href="#top" className="font-display text-lg tracking-tight text-zinc-100">
-          DevLeonardis
-        </a>
+    <>
+      <motion.div
+        aria-hidden="true"
+        className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-phosphor"
+        style={{ scaleX: progress }}
+      />
 
-        <ul className="hidden items-center gap-5 md:flex">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm text-zinc-300 transition-colors hover:text-emerald-300"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+      <motion.header
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: hidden ? -90 : 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        className="fixed inset-x-0 top-4 z-40 flex justify-center px-4"
+      >
+        <nav className="flex w-full max-w-3xl items-center justify-between gap-2 rounded-full border border-limestone/10 bg-ink/70 py-1.5 pr-1.5 pl-5 shadow-[0_10px_40px_-15px_rgb(0_0_0/0.8)] backdrop-blur-xl">
+          <a href="#top" className="font-display text-sm font-semibold text-limestone">
+            DL<span className="text-phosphor">_</span>
+          </a>
 
-        <div className="flex items-center gap-2">
-          <div className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.03] p-1">
+          <ul className="hidden items-center gap-1 md:flex">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="rounded-full px-3 py-1.5 text-sm text-limestone/75 transition-colors hover:bg-limestone/5 hover:text-limestone"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
-              onClick={() => setLocale("it")}
-              aria-label={`${t.nav.languageLabel}: Italiano`}
-              className={`rounded px-2 py-1 text-xs transition-colors ${
-                locale === "it" ? "bg-emerald-400 text-zinc-950" : "text-zinc-300 hover:text-zinc-100"
-              }`}
+              onClick={() => notify(t.bugs.hint, "sodium")}
+              aria-label={`${t.nav.bugs}: ${found.size}/${total}`}
+              className={cn(
+                "rounded-full px-2.5 py-1.5 font-display text-xs tabular-nums transition-colors hover:bg-limestone/5",
+                found.size === total ? "text-phosphor" : "text-sodium",
+              )}
             >
-              IT
+              bug {found.size}/{total}
             </button>
+
             <button
               type="button"
-              onClick={() => setLocale("en")}
-              aria-label={`${t.nav.languageLabel}: English`}
-              className={`rounded px-2 py-1 text-xs transition-colors ${
-                locale === "en" ? "bg-emerald-400 text-zinc-950" : "text-zinc-300 hover:text-zinc-100"
-              }`}
+              onClick={() => window.dispatchEvent(new CustomEvent(PALETTE_EVENT))}
+              aria-label={t.nav.commands}
+              className="hidden items-center gap-1 rounded-full border border-limestone/10 px-2.5 py-1.5 font-display text-xs text-steel transition-colors hover:text-limestone sm:inline-flex"
             >
-              EN
+              <Command className="size-3" />K
             </button>
-          </div>
 
-          <Button
-            asChild
-            variant="outline"
-            className="hidden border-emerald-300/40 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/20 lg:inline-flex"
-          >
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" aria-label={t.nav.whatsapp}>
-              <MessageCircle className="size-4" />
-              {t.nav.whatsapp}
+            <button
+              type="button"
+              onClick={() => setLocale(locale === "it" ? "en" : "it")}
+              aria-label={`${t.nav.languageLabel}: ${locale === "it" ? "English" : "Italiano"}`}
+              className="rounded-full px-2.5 py-1.5 font-display text-xs text-limestone/75 transition-colors hover:bg-limestone/5 hover:text-limestone"
+            >
+              {locale === "it" ? "EN" : "IT"}
+            </button>
+
+            <a
+              href="#contact"
+              className="rounded-full bg-phosphor px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-phosphor/85"
+            >
+              {t.nav.cta}
             </a>
-          </Button>
-
-          <Button asChild className="hidden bg-emerald-400 text-zinc-950 hover:bg-emerald-300 sm:inline-flex">
-            <a href="#contact">{t.nav.cta}</a>
-          </Button>
-        </div>
-      </nav>
-    </motion.header>
+          </div>
+        </nav>
+      </motion.header>
+    </>
   );
 }

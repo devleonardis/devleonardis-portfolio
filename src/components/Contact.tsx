@@ -1,9 +1,9 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { Linkedin, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { Bug } from "@/components/BugHunt";
 import { useLanguage } from "@/components/LanguageProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,6 @@ const LINKEDIN = siteConfig.linkedin;
 const ADDRESS = siteConfig.address;
 
 export default function Contact() {
-  const shouldReduceMotion = useReducedMotion();
   const { locale, t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -52,21 +51,16 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="mx-auto w-full max-w-6xl px-6 py-20 md:px-8 md:py-24">
-      <motion.div
-        initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-        whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.35 }}
-        className="grid gap-10 rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:grid-cols-2"
-      >
-        <div className="space-y-5">
-          <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/90">{t.contact.section}</p>
-          <h2 className="font-display text-3xl tracking-tight text-zinc-50 md:text-4xl">{t.contact.title}</h2>
+    <section id="contact" className="relative mx-auto w-full max-w-6xl px-6 pt-24 md:px-8 md:pt-32">
+      <div className="grid gap-12 md:grid-cols-2">
+        <div className="space-y-6">
+          <h2 className="wide font-display text-4xl font-semibold tracking-tight text-limestone md:text-5xl">
+            {t.contact.title}
+          </h2>
 
           <a
             href={`mailto:${EMAIL}`}
-            className="inline-flex items-center gap-2 text-zinc-200 underline decoration-emerald-300/60 underline-offset-4 transition-colors hover:text-emerald-300"
+            className="inline-flex items-center gap-2 font-display text-lg text-limestone underline decoration-phosphor/60 underline-offset-8 transition-colors hover:text-phosphor"
           >
             <Mail className="size-4" />
             {EMAIL}
@@ -74,24 +68,24 @@ export default function Contact() {
 
           <a
             href={PHONE_LINK}
-            className="flex items-center gap-2 text-sm text-zinc-300 transition-colors hover:text-emerald-300"
+            className="flex items-center gap-2 text-sm text-limestone/80 transition-colors hover:text-phosphor"
           >
             <Phone className="size-4" />
-            <span className="text-zinc-400">{t.contact.phone}:</span>
+            <span className="text-steel">{t.contact.phone}:</span>
             <span>{PHONE}</span>
           </a>
 
-          <p className="flex items-center gap-2 text-sm text-zinc-300">
+          <p className="flex items-center gap-2 text-sm text-limestone/80">
             <MapPin className="size-4" />
-            <span className="text-zinc-400">{t.contact.address}:</span>
+            <span className="text-steel">{t.contact.address}:</span>
             <span>{ADDRESS}</span>
           </p>
 
-          <div className="flex items-center gap-4 pt-2 text-zinc-300">
-            <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-300">
+          <div className="flex items-center gap-4 pt-2 text-limestone/80">
+            <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-phosphor">
               <Linkedin className="size-5" />
             </a>
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-300">
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-phosphor">
               <MessageCircle className="size-5" />
             </a>
           </div>
@@ -103,7 +97,7 @@ export default function Contact() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder={t.contact.name}
-            className="border-white/10 bg-zinc-900/70 text-zinc-100"
+            className="h-11 border-limestone/15 bg-surface/70 text-limestone placeholder:text-steel"
           />
           <Input
             required
@@ -111,7 +105,7 @@ export default function Contact() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder={t.contact.email}
-            className="border-white/10 bg-zinc-900/70 text-zinc-100"
+            className="h-11 border-limestone/15 bg-surface/70 text-limestone placeholder:text-steel"
           />
           <Textarea
             required
@@ -119,24 +113,24 @@ export default function Contact() {
             value={message}
             onChange={(event) => setMessage(event.target.value)}
             placeholder={t.contact.message}
-            className="border-white/10 bg-zinc-900/70 text-zinc-100"
+            className="h-11 border-limestone/15 bg-surface/70 text-limestone placeholder:text-steel"
           />
           <Button
             type="submit"
             disabled={status === "loading"}
-            className="w-full bg-emerald-400 text-zinc-950 hover:bg-emerald-300"
+            className="h-11 w-full bg-phosphor text-ink hover:bg-phosphor/85"
           >
             {status === "loading" ? t.contact.sending : t.contact.send}
           </Button>
 
           {status === "success" ? (
-            <p className="rounded-md border border-emerald-300/40 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-200">
+            <p className="rounded-md border border-phosphor/40 bg-phosphor/10 px-3 py-2 text-sm text-phosphor">
               {t.contact.success}
             </p>
           ) : null}
 
           {status === "error" ? (
-            <p className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+            <p className="rounded-md border border-[#ff6b5b]/40 bg-[#ff6b5b]/10 px-3 py-2 text-sm text-[#ffb0a6]">
               {t.contact.error}
             </p>
           ) : null}
@@ -145,7 +139,7 @@ export default function Contact() {
             asChild
             type="button"
             variant="outline"
-            className="w-full border-emerald-300/40 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/20"
+            className="w-full border-limestone/20 bg-transparent text-limestone hover:bg-limestone/10"
           >
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="size-4" />
@@ -153,11 +147,57 @@ export default function Contact() {
             </a>
           </Button>
         </form>
-      </motion.div>
+      </div>
 
-      <footer className="pt-8 text-center text-xs text-zinc-500">
-        © {new Date().getFullYear()} DevLeonardis. {t.contact.footer}
+      <Bug id="contact" className="top-16 right-4 md:top-24 md:right-[48%]" />
+
+      <footer className="mt-24 border-t border-limestone/10 pt-6 pb-10">
+        <Wordmark />
+        <p className="mt-6 text-center text-xs text-steel">
+          © {new Date().getFullYear()} DevLeonardis. {t.contact.footer}
+        </p>
       </footer>
     </section>
+  );
+}
+
+function Wordmark() {
+  return (
+    <svg viewBox="0 0 1000 150" className="group w-full select-none" role="img" aria-label="DevLeonardis">
+      <defs>
+        <linearGradient id="wordmark-gradient" x1="0" x2="1">
+          <stop offset="0%" stopColor="var(--phosphor)" />
+          <stop offset="100%" stopColor="var(--sodium)" />
+        </linearGradient>
+      </defs>
+      <text
+        x="50%"
+        y="54%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        className="font-display"
+        fontSize="116"
+        fontWeight="700"
+        letterSpacing="-6"
+        fill="transparent"
+        stroke="rgb(236 230 217 / 0.14)"
+        strokeWidth="1.2"
+      >
+        DevLeonardis
+      </text>
+      <text
+        x="50%"
+        y="54%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        className="font-display opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        fontSize="116"
+        fontWeight="700"
+        letterSpacing="-6"
+        fill="url(#wordmark-gradient)"
+      >
+        DevLeonardis
+      </text>
+    </svg>
   );
 }

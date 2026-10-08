@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Sans, Martian_Mono } from "next/font/google";
+import { BugHuntProvider } from "@/components/BugHunt";
+import DevTools from "@/components/DevTools";
 import FaviconSwitcher from "@/components/FaviconSwitcher";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import SmoothScroll from "@/components/SmoothScroll";
 import { siteConfig } from "@/lib/site";
 
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const martian = Martian_Mono({
+  variable: "--font-martian",
   subsets: ["latin"],
+  axes: ["wdth"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const plex = IBM_Plex_Sans({
+  variable: "--font-plex",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -85,10 +91,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} bg-background font-sans antialiased`}>
+      <body className={`${martian.variable} ${plex.variable} bg-background font-sans antialiased`}>
         <LanguageProvider>
-          <FaviconSwitcher />
-          {children}
+          <BugHuntProvider>
+            <SmoothScroll />
+            <FaviconSwitcher />
+            {children}
+            <DevTools />
+          </BugHuntProvider>
         </LanguageProvider>
       </body>
     </html>

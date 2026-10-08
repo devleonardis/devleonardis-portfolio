@@ -1,9 +1,12 @@
 import About from "@/components/About";
 import BackgroundFX from "@/components/BackgroundFX";
+import BuildSequence from "@/components/BuildSequence";
+import CommandPalette from "@/components/CommandPalette";
 import Contact from "@/components/Contact";
 import EasterEggSnake from "@/components/EasterEggSnake";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
+import Playground from "@/components/Playground";
 import Projects from "@/components/Projects";
 import Services from "@/components/Services";
 import WhatsAppCTA from "@/components/WhatsAppCTA";
@@ -52,7 +55,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
+    <div className="relative min-h-screen overflow-x-clip text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -61,12 +64,15 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <BuildSequence />
         <Projects />
+        <Playground />
         <About />
         <Services />
         <Contact />
       </main>
       <WhatsAppCTA />
+      <CommandPalette />
       <EasterEggSnake />
     </div>
   );

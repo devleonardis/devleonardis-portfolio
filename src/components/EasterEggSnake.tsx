@@ -123,10 +123,17 @@ export default function EasterEggSnake() {
       }
     };
 
+    const onCommand = () => {
+      setOpen(true);
+      resetGame();
+    };
+
     window.addEventListener("keydown", onType);
+    window.addEventListener("devleonardis:snake", onCommand);
 
     return () => {
       window.removeEventListener("keydown", onType);
+      window.removeEventListener("devleonardis:snake", onCommand);
     };
   }, []);
 
@@ -257,16 +264,16 @@ export default function EasterEggSnake() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[94vw] border-emerald-300/20 bg-zinc-950 p-4 sm:max-w-lg sm:p-5">
+      <DialogContent className="max-w-[94vw] border-white/10 bg-ink p-4 sm:max-w-lg sm:p-5">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl text-emerald-300">{text.title}</DialogTitle>
+          <DialogTitle className="font-display text-xl text-phosphor">{text.title}</DialogTitle>
           <DialogDescription className="text-zinc-300">{text.desc}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm">
             <span className="text-zinc-300">
-              {text.score}: <strong className="text-emerald-300">{score}</strong>
+              {text.score}: <strong className="text-phosphor">{score}</strong>
             </span>
             {gameOver ? <span className="text-red-400">{text.gameOver}</span> : null}
           </div>
@@ -285,7 +292,7 @@ export default function EasterEggSnake() {
                     : cell.type === "snake"
                       ? "rounded-[2px] bg-emerald-500/85"
                       : cell.type === "food"
-                        ? "rounded-[2px] bg-cyan-300"
+                        ? "rounded-[2px] bg-sodium"
                         : "rounded-[2px] bg-zinc-800/55"
                 }
               />
@@ -293,7 +300,7 @@ export default function EasterEggSnake() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button onClick={resetGame} className="bg-emerald-400 text-zinc-950 hover:bg-emerald-300">
+            <Button onClick={resetGame} className="bg-phosphor text-ink hover:bg-phosphor/85">
               {text.restart}
             </Button>
             <Button

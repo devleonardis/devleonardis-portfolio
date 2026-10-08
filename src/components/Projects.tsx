@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { PointerEvent, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, ExternalLink, LoaderCircle } from "lucide-react";
 
+import { Bug } from "@/components/BugHunt";
 import { useLanguage } from "@/components/LanguageProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Project } from "@/data/projects";
 import { projects } from "@/data/projects";
 
@@ -56,14 +48,14 @@ function ProjectPreviewDialog({ project }: { project: Project }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="border-white/15 bg-transparent text-zinc-200 hover:bg-white/10">
+        <Button variant="outline" className="border-limestone/20 bg-transparent text-limestone hover:bg-limestone/10">
           {t.projects.preview}
         </Button>
       </DialogTrigger>
 
       <DialogContent
         showCloseButton
-        className="h-[100vh] w-[100vw] max-w-none rounded-none border-white/10 bg-zinc-950 p-0 sm:h-[90vh] sm:w-[90vw] sm:max-w-[90vw] sm:rounded-2xl"
+        className="h-[100vh] w-[100vw] max-w-none rounded-none border-limestone/10 bg-ink p-0 sm:h-[90vh] sm:w-[90vw] sm:max-w-[90vw] sm:rounded-2xl"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.985 }}
@@ -72,19 +64,19 @@ function ProjectPreviewDialog({ project }: { project: Project }) {
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="flex h-full flex-col"
         >
-          <DialogHeader className="flex-row items-center justify-between gap-4 border-b border-white/10 px-6 py-5 text-left">
+          <DialogHeader className="flex-row items-center justify-between gap-4 border-b border-limestone/10 px-6 py-5 text-left">
             <div className="space-y-2">
-              <DialogTitle className="font-display text-2xl text-zinc-100">{project.title}</DialogTitle>
+              <DialogTitle className="wide font-display text-xl font-semibold text-limestone">{project.title}</DialogTitle>
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="bg-white/10 text-zinc-200">
+                  <Badge key={tag} variant="secondary" className="bg-limestone/10 font-normal text-limestone/80">
                     {tag}
                   </Badge>
                 ))}
               </div>
             </div>
 
-            <Button asChild className="bg-emerald-400 text-zinc-950 hover:bg-emerald-300">
+            <Button asChild className="bg-phosphor text-ink hover:bg-phosphor/85">
               <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                 {t.projects.openNewTab}
                 <ArrowUpRight className="size-4" />
@@ -99,19 +91,19 @@ function ProjectPreviewDialog({ project }: { project: Project }) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-zinc-950/80"
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-ink/80"
                 >
-                  <LoaderCircle className="size-8 animate-spin text-emerald-300" />
-                  <p className="text-sm text-zinc-300">{t.projects.loading}</p>
-                  <Skeleton className="h-8 w-40 bg-zinc-800" />
+                  <LoaderCircle className="size-8 animate-spin text-phosphor" />
+                  <p className="text-sm text-limestone/80">{t.projects.loading}</p>
+                  <Skeleton className="h-8 w-40 bg-surface" />
                 </motion.div>
               )}
             </AnimatePresence>
 
             {errored ? (
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-zinc-950 p-6 text-center">
-                <p className="max-w-sm text-sm text-zinc-300">{t.projects.fallback}</p>
-                <Button asChild className="bg-emerald-400 text-zinc-950 hover:bg-emerald-300">
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-ink p-6 text-center">
+                <p className="max-w-sm text-sm text-limestone/80">{t.projects.fallback}</p>
+                <Button asChild className="bg-phosphor text-ink hover:bg-phosphor/85">
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                     {t.projects.openNewTab}
                     <ExternalLink className="size-4" />
@@ -135,80 +127,73 @@ function ProjectPreviewDialog({ project }: { project: Project }) {
   );
 }
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const shouldReduceMotion = useReducedMotion();
+function ProjectRow({ project }: { project: Project }) {
   const { locale, t } = useLanguage();
 
+  const onPointerMove = (event: PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--x", `${event.clientX - rect.left}px`);
+    event.currentTarget.style.setProperty("--y", `${event.clientY - rect.top}px`);
+  };
+
   return (
-    <motion.article
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-      whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.35, delay: index * 0.06 }}
-      whileHover={shouldReduceMotion ? {} : { y: -4 }}
+    <li
+      onPointerMove={onPointerMove}
+      className="group relative isolate border-t border-limestone/10 last:border-b"
     >
-      <Card className="h-full border-white/10 bg-white/[0.03] py-0 backdrop-blur transition-colors hover:border-emerald-300/40">
-        <CardHeader className="space-y-4 px-5 pt-5">
-          <div className="flex items-center justify-between">
-            <CardTitle className="font-display text-xl text-zinc-100">{project.title}</CardTitle>
-            <span className="text-xs text-zinc-400">{project.year}</span>
-          </div>
-          <CardDescription className="line-clamp-1 text-zinc-300">{project.description[locale]}</CardDescription>
-          <div className="flex flex-wrap gap-2">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(420px circle at var(--x, 50%) var(--y, 50%), rgb(92 242 176 / 0.09), transparent 65%)",
+        }}
+      />
+      <div className="grid gap-5 py-8 md:grid-cols-[4rem_minmax(0,1fr)_auto] md:items-center md:gap-8 md:py-10">
+        <span className="font-display text-xs text-steel">{project.year}</span>
+
+        <div className="min-w-0">
+          <h3 className="wide font-display text-2xl font-semibold tracking-tight text-limestone transition-transform duration-300 ease-out group-hover:translate-x-2 md:text-4xl">
+            {project.title}
+          </h3>
+          <p className="mt-3 max-w-xl text-limestone/70">{project.description[locale]}</p>
+          <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-steel">
             {project.tags.map((tag) => (
-              <Badge key={tag} variant="outline" className="border-white/15 text-zinc-300">
-                {tag}
-              </Badge>
+              <li key={tag}>{tag}</li>
             ))}
-          </div>
-        </CardHeader>
+          </ul>
+        </div>
 
-        <CardContent className="px-5" />
-
-        <CardFooter className="flex items-center gap-3 px-5 pb-5">
-          <Button asChild className="bg-emerald-400 text-zinc-950 hover:bg-emerald-300">
+        <div className="flex items-center gap-3">
+          <Button asChild className="bg-phosphor text-ink hover:bg-phosphor/85">
             <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
               {t.projects.live}
               <ArrowUpRight className="size-4" />
             </a>
           </Button>
           <ProjectPreviewDialog project={project} />
-        </CardFooter>
-      </Card>
-    </motion.article>
+        </div>
+      </div>
+    </li>
   );
 }
 
 export default function Projects() {
-  const [tab, setTab] = useState("featured");
   const { t } = useLanguage();
 
-  const featuredProjects = useMemo(() => projects.filter((project) => project.featured), []);
-  const list = tab === "featured" ? featuredProjects : projects;
-
   return (
-    <section id="projects" className="mx-auto w-full max-w-6xl px-6 py-20 md:px-8 md:py-24">
-      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-emerald-300/90">{t.projects.section}</p>
-          <h2 className="mt-3 font-display text-3xl tracking-tight text-zinc-50 md:text-4xl">
-            {t.projects.title}
-          </h2>
-        </div>
+    <section id="projects" className="relative mx-auto w-full max-w-6xl px-6 py-24 md:px-8 md:py-32">
+      <h2 className="wide mb-12 font-display text-4xl font-semibold tracking-tight text-limestone md:text-5xl">
+        {t.projects.title}
+      </h2>
 
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="border border-white/10 bg-white/[0.03]">
-            <TabsTrigger value="featured">{t.projects.featured}</TabsTrigger>
-            <TabsTrigger value="all">{t.projects.all}</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {list.map((project, index) => (
-          <ProjectCard key={project.id} project={project} index={index} />
+      <ol>
+        {projects.map((project) => (
+          <ProjectRow key={project.id} project={project} />
         ))}
-      </div>
+      </ol>
+
+      <Bug id="projects" className="right-6 bottom-10 md:right-2" />
     </section>
   );
 }
