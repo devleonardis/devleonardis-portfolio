@@ -84,12 +84,10 @@ Il form in `/src/components/Contact.tsx` chiama `POST /api/contact`, gestito dal
 
 ### Variabili ambiente
 
-`SMTP_PORT`, `CONTACT_FROM_EMAIL` e `CONTACT_TO_EMAIL` sono in `wrangler.jsonc` (`vars`).
-Le credenziali vanno salvate come secret del Worker:
+`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `CONTACT_FROM_EMAIL` e `CONTACT_TO_EMAIL` sono in `wrangler.jsonc` (`vars`).
+La password SMTP (password per le app di Google) va salvata come secret del Worker:
 
 ```bash
-npx wrangler secret put SMTP_HOST
-npx wrangler secret put SMTP_USER
 npx wrangler secret put SMTP_PASS
 ```
 
@@ -106,7 +104,7 @@ In locale (`npm run preview`) mettile in un file `.dev.vars` (già in `.gitignor
 
 ## Go-Live Checklist
 
-1. Configura i secret del Worker (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`) e controlla i `vars` in `wrangler.jsonc`.
+1. Configura il secret `SMTP_PASS` del Worker e controlla i `vars` in `wrangler.jsonc`.
 2. Testa il form contatti da sito:
    - arrivo mail su `info@devleonardis.com`
    - arrivo mail di conferma al mittente
