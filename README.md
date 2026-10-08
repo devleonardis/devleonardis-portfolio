@@ -30,9 +30,12 @@ Il sito è un export statico di Next.js (`output: "export"`, cartella `out/`) se
 Il Worker in `worker/index.ts` gestisce `/api/contact` e reindirizza `www.devleonardis.com` sul dominio principale (308).
 La configurazione è in `wrangler.jsonc`.
 
+Deploy automatico: il repo GitHub è collegato al Worker tramite Cloudflare Workers Builds.
+Ogni push su `main` esegue `npm run build` e `npx wrangler deploy`; i log sono nella tab Deployments del Worker.
+
 ```bash
 npm run preview   # build + wrangler dev su http://localhost:8787 (form contatti incluso)
-npm run deploy    # build + wrangler deploy in produzione
+npm run deploy    # deploy manuale da locale (build + wrangler deploy)
 ```
 
 Con `npm run dev` il form contatti non ha backend: per provarlo usa `npm run preview`.
