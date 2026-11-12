@@ -71,10 +71,8 @@ export default function Offer() {
       <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {offer.sectors.map((sector) => (
           <li key={sector.href}>
-            <a
+            <Link
               href={sector.href}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group flex h-full items-center justify-between gap-3 rounded-xl border border-limestone/10 px-4 py-3 text-sm text-limestone/80 transition-colors hover:border-phosphor/40 hover:text-limestone"
             >
               <span>{sector.name}</span>
@@ -82,7 +80,7 @@ export default function Offer() {
                 aria-hidden="true"
                 className="size-4 shrink-0 text-steel transition-colors group-hover:text-phosphor"
               />
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

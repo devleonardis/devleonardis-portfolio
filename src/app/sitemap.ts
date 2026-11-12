@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { sectors } from "@/data/sectors";
 import { siteConfig } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -24,5 +25,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    ...sectors.map((s) => ({
+      url: `${siteConfig.url}/siti/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
   ];
 }
