@@ -23,6 +23,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: t.nav.projects, href: "#projects" },
+    { label: t.nav.offer, href: "#offerta" },
     { label: t.nav.play, href: "#play" },
     { label: t.nav.about, href: "#about" },
     { label: t.nav.contact, href: "#contact" },

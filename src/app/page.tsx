@@ -6,6 +6,7 @@ import Contact from "@/components/Contact";
 import EasterEggSnake from "@/components/EasterEggSnake";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
+import Offer from "@/components/Offer";
 import Playground from "@/components/Playground";
 import Projects from "@/components/Projects";
 import Services from "@/components/Services";
@@ -69,6 +70,7 @@ export default function Home() {
         <Playground />
         <About />
         <Services />
+        <Offer />
         <Contact />
       </main>
       <WhatsAppCTA />

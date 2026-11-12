@@ -64,6 +64,7 @@ export default function CommandPalette() {
       { id: "play", group: "navigate", label: `${t.nav.play}: ${t.play.title}`, keywords: "game gioco play stack 3d", icon: Gamepad2, run: go("#play") },
       { id: "about", group: "navigate", label: t.nav.about, keywords: "about chi sono simone", icon: Terminal, run: go("#about") },
       { id: "services", group: "navigate", label: t.nav.services, keywords: "services servizi", icon: Terminal, run: go("#services") },
+      { id: "offer", group: "navigate", label: t.nav.offer, keywords: "offerta siti prezzi piani websites pricing", icon: Terminal, run: go("#offerta") },
       { id: "contact", group: "navigate", label: t.nav.contact, keywords: "contact contatti form", icon: Mail, run: go("#contact") },
       { id: "top", group: "navigate", label: t.palette.top, keywords: "top home inizio", icon: ArrowUp, run: () => scrollToTarget(0) },
       {

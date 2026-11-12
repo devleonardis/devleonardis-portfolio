@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { Linkedin, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
@@ -155,6 +156,14 @@ export default function Contact() {
         <Wordmark />
         <p className="mt-6 text-center text-xs text-steel">
           © {new Date().getFullYear()} DevLeonardis. {t.contact.footer}
+        </p>
+        <p className="mt-3 flex justify-center gap-4 text-xs text-steel">
+          <Link href="/condizioni" className="transition-colors hover:text-limestone">
+            {t.contact.terms}
+          </Link>
+          <Link href="/privacy" className="transition-colors hover:text-limestone">
+            {t.contact.privacy}
+          </Link>
         </p>
       </footer>
     </section>

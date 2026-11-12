@@ -13,6 +13,8 @@ export const siteConfig = {
   phoneDisplay: "+39 366 525 2021",
   phoneE164: "+393665252021",
   address: "Via Papa Innocenzo XII, 19, Bari",
+  // TODO(Simone): inserire la Partita IVA reale prima della pubblicazione (obbligatoria sul sito, art. 35 DPR 633/1972).
+  vatNumber: "[DA INSERIRE]",
   linkedin: "https://www.linkedin.com/in/simone-de-leonardis-49680322b/",
   whatsappMessage: "Ciao Simone, ho visto il tuo portfolio e vorrei parlare di un progetto.",
 } as const;
