@@ -19,8 +19,9 @@
   "vars": {
     "SMTP_HOST": "smtp.gmail.com",
     "SMTP_PORT": "587",
-    "SMTP_USER": "info@devleonardis.com",
-    "CONTACT_FROM_EMAIL": "mailfrom@devleonardis.com",
+    // SMTP_USER e SMTP_PASS sono segreti: l'account Gmail e una sua password per le app.
+    // info@devleonardis.com è un alias Cloudflare Email Routing e non può fare login su smtp.gmail.com.
+    "CONTACT_FROM_EMAIL": "info@devleonardis.com",
     "CONTACT_TO_EMAIL": "info@devleonardis.com"
   },
   "observability": {

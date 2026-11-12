@@ -60,9 +60,8 @@ async function handleContact(request: Request, env: Env) {
 
     const to = env.CONTACT_TO_EMAIL ?? siteConfig.email;
     const fromRequested = env.CONTACT_FROM_EMAIL ?? siteConfig.mailFrom;
-    // Gmail SMTP usually rejects unverified aliases. Fallback keeps delivery reliable.
-    const from = host.includes("gmail.com") ? user : fromRequested;
-    const headers = from !== fromRequested ? { "X-Requested-From": fromRequested } : undefined;
+    // SMTP_USER è l'account Gmail (segreto); il mittente è un alias verificato in Gmail ("Invia messaggio come").
+    const from = fromRequested;
 
     const adminText = [`Nome: ${name}`, `Email: ${email}`, "", "Messaggio:", message].join("\n");
 
@@ -104,7 +103,6 @@ async function handleContact(request: Request, env: Env) {
         reply: email,
         subject: `Nuovo contatto portfolio - ${name}`,
         text: adminText,
-        headers,
       });
       await mailer.send({
         from: { name: siteConfig.fullName, email: from },
@@ -112,7 +110,6 @@ async function handleContact(request: Request, env: Env) {
         reply: to,
         subject: userSubject,
         text: userText,
-        headers,
       });
     } finally {
       await mailer.close();
