@@ -175,6 +175,15 @@ export default function PrivacyPage() {
           </a>
           ).
         </p>
+        <div id="cancellazione-dati">
+          <h3>Cancellazione dei dati ricevuti tramite Instagram o Facebook</h3>
+          <p>
+            Se hai scritto alla pagina Instagram di DevLeonardis e vuoi che i tuoi dati vengano cancellati, scrivi a{" "}
+            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> dall&apos;email o dal profilo Instagram
+            indicando lo username. Cancello i messaggi e i dati associati entro 30 giorni e ti confermo l&apos;avvenuta
+            cancellazione. Nessun dato viene conservato oltre questo termine, salvo obblighi di legge.
+          </p>
+        </div>
       </Section>
 
       <Section title="9. Sicurezza">
