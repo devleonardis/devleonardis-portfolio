@@ -31,5 +31,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })),
+    ...["saas", "ecommerce", "clinica", "immobiliare", "ristorante"].map((slug) => ({
+      url: `${siteConfig.url}/demo/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    })),
   ];
 }

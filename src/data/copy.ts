@@ -42,9 +42,14 @@ export const copy = {
       ],
     },
     projects: {
-      title: "Progetti selezionati",
+      title: "Progetti Selezionati",
+      subtitle:
+        "Piattaforme SaaS ad alte prestazioni, boutique e-commerce, portali clinici e business d'eccellenza. Codice moderno, UI reattiva e massima velocità di caricamento.",
+      all: "Tutti i progetti",
+      platforms: "Piattaforme & E-Commerce",
+      local: "Business Locali",
       live: "Apri il sito",
-      preview: "Anteprima",
+      preview: "Anteprima Rapida",
       openNewTab: "Apri in una nuova tab",
       loading: "Caricamento anteprima...",
       fallback:
@@ -217,9 +222,14 @@ export const copy = {
       ],
     },
     projects: {
-      title: "Selected work",
+      title: "Selected Projects",
+      subtitle:
+        "High-performance SaaS platforms, luxury e-commerce stores, clinical portals, and local businesses. Clean modern code, reactive UI, and ultra-fast loading.",
+      all: "All Projects",
+      platforms: "Platforms & E-Commerce",
+      local: "Local Businesses",
       live: "Open site",
-      preview: "Preview",
+      preview: "Quick Preview",
       openNewTab: "Open in new tab",
       loading: "Loading preview...",
       fallback: "This site doesn't allow embedded previews. Open it in a new tab.",
