@@ -17,16 +17,96 @@ type ContactBody = {
   email?: string;
   message?: string;
   locale?: "it" | "en";
+  honeypot?: string;
 };
 
 const APEX_HOST = new URL(siteConfig.url).hostname;
+
+// Rate limiting in-memory (per edge worker isolate)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string, maxRequests = 5, windowMs = 5 * 60 * 1000): boolean {
+  const now = Date.now();
+
+  // Periodically purge expired entries if map grows
+  if (rateLimitMap.size > 2000) {
+    for (const [key, val] of rateLimitMap.entries()) {
+      if (val.resetAt < now) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+
+  const entry = rateLimitMap.get(ip);
+  if (!entry || entry.resetAt < now) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
+    return false;
+  }
+
+  if (entry.count >= maxRequests) {
+    return true;
+  }
+
+  entry.count += 1;
+  return false;
+}
+
+function cleanHeader(value: string): string {
+  // Strip carriage returns, newlines, and non-printable control characters
+  return value.replace(/[\r\n\x00-\x1F\x7F]/g, " ").trim();
+}
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function json(body: unknown, status = 200) {
-  return Response.json(body, { status, headers: { "cache-control": "no-store" } });
+  return Response.json(body, {
+    status,
+    headers: {
+      "cache-control": "no-store",
+      "content-type": "application/json; charset=utf-8",
+    },
+  });
+}
+
+function addSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+
+  // Prevent clickjacking
+  headers.set("X-Frame-Options", "DENY");
+  // Prevent MIME-sniffing
+  headers.set("X-Content-Type-Options", "nosniff");
+  // Referrer Policy
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  // Permissions Policy
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), browsing-topics=()");
+  // HSTS (HTTP Strict Transport Security)
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  // Cross-Origin Resource Policy
+  headers.set("Cross-Origin-Resource-Policy", "same-origin");
+
+  // Content-Security-Policy
+  // 'unsafe-inline' and 'unsafe-eval' for Next.js hydration and Three.js canvas/shaders
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: https: blob:",
+    "connect-src 'self' https://wa.me",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self' https://wa.me",
+  ].join("; ");
+
+  headers.set("Content-Security-Policy", csp);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
 async function handleContact(request: Request, env: Env) {
@@ -34,12 +114,42 @@ async function handleContact(request: Request, env: Env) {
     return json({ error: "Method not allowed" }, 405);
   }
 
+  // Origin check (CSRF / cross-site protection)
+  const origin = request.headers.get("origin");
+  if (origin) {
+    try {
+      const originHost = new URL(origin).hostname;
+      const isAllowed =
+        originHost === APEX_HOST ||
+        originHost === `www.${APEX_HOST}` ||
+        originHost === "localhost" ||
+        originHost === "127.0.0.1";
+
+      if (!isAllowed) {
+        return json({ error: "Forbidden origin" }, 403);
+      }
+    } catch {
+      return json({ error: "Invalid origin" }, 400);
+    }
+  }
+
+  // Client IP rate limiting (max 5 requests per 5 minutes per IP)
+  const clientIp = request.headers.get("cf-connecting-ip") || "unknown";
+  if (isRateLimited(clientIp, 5, 5 * 60 * 1000)) {
+    return json({ error: "Too many requests. Please try again later." }, 429);
+  }
+
   try {
     const body = (await request.json()) as ContactBody;
-    const name = body.name?.trim() ?? "";
-    const email = body.email?.trim() ?? "";
+
+    // Honeypot check: silently succeed if bot filled the hidden trap field
+    if (body.honeypot && body.honeypot.trim() !== "") {
+      return json({ ok: true });
+    }
+
+    const name = cleanHeader(body.name ?? "");
+    const email = cleanHeader(body.email ?? "");
     const message = body.message?.trim() ?? "";
-    const locale = body.locale === "en" ? "en" : "it";
 
     if (!name || !email || !message) {
       return json({ error: "Missing required fields" }, 400);
@@ -59,33 +169,19 @@ async function handleContact(request: Request, env: Env) {
     }
 
     const to = env.CONTACT_TO_EMAIL ?? siteConfig.email;
-    const fromRequested = env.CONTACT_FROM_EMAIL ?? siteConfig.mailFrom;
-    // SMTP_USER è l'account Gmail (segreto); il mittente è un alias verificato in Gmail ("Invia messaggio come").
-    const from = fromRequested;
+    const from = env.CONTACT_FROM_EMAIL ?? siteConfig.mailFrom;
 
-    const adminText = [`Nome: ${name}`, `Email: ${email}`, "", "Messaggio:", message].join("\n");
-
-    const userSubject = locale === "it" ? "Mail inviata con successo" : "Message sent successfully";
-    const userText =
-      locale === "it"
-        ? [
-            `Ciao ${name},`,
-            "",
-            "la tua mail è stata inviata con successo.",
-            "Ti risponderò il prima possibile.",
-            "",
-            "Grazie,",
-            "Simone De Leonardis",
-          ].join("\n")
-        : [
-            `Hi ${name},`,
-            "",
-            "your message was sent successfully.",
-            "I'll get back to you as soon as possible.",
-            "",
-            "Thanks,",
-            "Simone De Leonardis",
-          ].join("\n");
+    const adminText = [
+      `Nuovo messaggio dal portfolio DevLeonardis:`,
+      `-----------------------------------------`,
+      `Nome: ${name}`,
+      `Email: ${email}`,
+      `Data: ${new Date().toISOString()}`,
+      `IP: ${clientIp}`,
+      ``,
+      `Messaggio:`,
+      message,
+    ].join("\n");
 
     const mailer = await WorkerMailer.connect({
       host,
@@ -97,19 +193,15 @@ async function handleContact(request: Request, env: Env) {
     });
 
     try {
+      // Send ONLY to the site owner.
+      // Do not send automated unauthenticated confirmation emails to user-supplied
+      // addresses to prevent open-relay / confirmation bombing / spam abuse.
       await mailer.send({
         from: { name: siteConfig.name, email: from },
         to,
         reply: email,
-        subject: `Nuovo contatto portfolio - ${name}`,
+        subject: `Nuovo contatto portfolio - ${name.slice(0, 80)}`,
         text: adminText,
-      });
-      await mailer.send({
-        from: { name: siteConfig.fullName, email: from },
-        to: email,
-        reply: to,
-        subject: userSubject,
-        text: userText,
       });
     } finally {
       await mailer.close();
@@ -133,9 +225,11 @@ export default {
     }
 
     if (url.pathname === "/api/contact") {
-      return handleContact(request, env);
+      const response = await handleContact(request, env);
+      return addSecurityHeaders(response);
     }
 
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    return addSecurityHeaders(assetResponse);
   },
 } satisfies ExportedHandler<Env>;

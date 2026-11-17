@@ -22,6 +22,7 @@ export default function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -34,7 +35,7 @@ export default function Contact() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, message, locale }),
+        body: JSON.stringify({ name, email, message, locale, honeypot }),
       });
 
       if (!response.ok) {
@@ -46,6 +47,7 @@ export default function Contact() {
       setName("");
       setEmail("");
       setMessage("");
+      setHoneypot("");
     } catch {
       setStatus("error");
     }
@@ -93,6 +95,16 @@ export default function Contact() {
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          <div className="absolute -left-[9999px] -top-[9999px] select-none opacity-0" aria-hidden="true">
+            <input
+              type="text"
+              name="company_website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(event) => setHoneypot(event.target.value)}
+            />
+          </div>
           <Input
             required
             value={name}

@@ -38,10 +38,11 @@ export default async function SectorPage({ params }: Props) {
     "@type": "FAQPage",
     mainEntity: sector.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
   };
+  const safeJsonLd = JSON.stringify(faqJsonLd).replace(/</g, "\\u003c");
 
   return (
     <div className="relative min-h-screen text-foreground">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd }} />
 
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 pt-8 md:px-8">
         <Link href="/" className="font-display text-sm font-semibold text-limestone">
